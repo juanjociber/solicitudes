@@ -84,42 +84,41 @@
       }
 
     function FnBuscarSolicitudes($conmy, $cliente, $equipo, $nombre, $fechainicial, $fechafinal, $pagina) {
-        try {
-            $datos = array('data'=>array(), 'pag'=>0);
-            $query = "";
+      try {
+        $datos = array('data'=>array(), 'pag'=>0);
+        $query = "";
 
-            if(!empty($nombre)){
-                $query = " and nombre like='%".$nombre."%'";
-            }else{
-                if($equipo>0){
-                    $query.=" and equid=".$equipo;
-                }
-                $query.=" and fecha between '".$fechainicial."' and '".$fechafinal."'";
-            }
-
-            $query.=" limit ".$pagina.", 2";
-
-            $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_codigo, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
-            $stmt->execute(array(':CliId'=>$cliente));
-			$n=$stmt->rowCount();
-            if($n>0){
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $datos['data'][]=array(
-                        'id'=>(int)$row['id'],
-                        'fecha'=>$row['fecha'],                        
-                        'nombre'=>$row['nombre'],
-                        'clinombre'=>$row['cli_nombre'],
-                        'equcodigo'=>$row['equ_codigo'],
-                        'actividades'=>$row['actividades'],
-                        'estado'=>(int)$row['estado']
-                    );
-                }
-                $datos['pag']=$n;
-            }            
-            return $datos;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage().$msg);
+        if(!empty($nombre)){
+          $query = " and nombre like='%".$nombre."%'";
+        }else{
+          if($equipo>0){
+            $query.=" and equid=".$equipo;
+          }
+          $query.=" and fecha between '".$fechainicial."' and '".$fechafinal."'";
         }
+        $query.=" limit ".$pagina.", 2";
+
+        $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_codigo, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
+        $stmt->execute(array(':CliId'=>$cliente));
+			  $n=$stmt->rowCount();
+        if($n>0){
+          while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $datos['data'][]=array(
+              'id'=>(int)$row['id'],
+              'fecha'=>$row['fecha'],                        
+              'nombre'=>$row['nombre'],
+              'clinombre'=>$row['cli_nombre'],
+              'equcodigo'=>$row['equ_codigo'],
+              'actividades'=>$row['actividades'],
+              'estado'=>(int)$row['estado']
+            );
+          }
+          $datos['pag']=$n;
+        }            
+        return $datos;
+      } catch (PDOException $e) {
+        throw new Exception($e->getMessage().$msg);
+      }
     }
 
     function FnFinalizarSolicitud($conmy, $solicitud) {
@@ -223,12 +222,12 @@
     function FnListarPlantilla($conmy) {
         try {
             $data=array();
-            $stmt=$conmy->prepare("select id, nombre from tblchkplantillas;");
+            $stmt=$conmy->prepare("select id, tipo from tblchkplantillas;");
             $stmt->execute();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $data[]=array(
                     'id'=>$row['id'],
-                    'nombre'=>$row['nombre']
+                    'nombre'=>$row['tipo']
                 );
             }
             return $data;

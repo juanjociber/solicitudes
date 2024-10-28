@@ -1,32 +1,32 @@
 <?php
-    session_start();
+  session_start();
 
-    if(empty($_SESSION['UserName']) || empty($_SESSION['CliId']) || empty($_SESSION['CliNombre'])){
-        header("location:/gesman/Salir.php");
-        exit();
-    }
+  if(empty($_SESSION['UserName']) || empty($_SESSION['CliId']) || empty($_SESSION['CliNombre'])){
+    header("location:/gesman/Salir.php");
+    exit();
+  }
+  $ID=empty($_GET['id']) ? 0 : $_GET['id'];
+  $ESTADO=0;
+  $SOLICITUD=array();
+  $PLANTILLAS=array();
 
-    $ID=empty($_GET['id']) ? 0 : $_GET['id'];
-    $ESTADO=0;
-    $SOLICITUD=array();
-    $PLANTILLAS=array();
+  require_once $_SERVER['DOCUMENT_ROOT'].'/gesman/connection/ConnGesmanDb.php';
+  require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
 
-    require_once $_SERVER['DOCUMENT_ROOT'].'/gesman/connection/ConnGesmanDb.php';
-    require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
-
-    try{
-        $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $SOLICITUD=FnBuscarSolicitud($conmy, $ID, $_SESSION['CliId']);
-        $PLANTILLAS=FnListarPlantilla($conmy);
-        if(!empty($SOLICITUD['estado'])){
-            $ESTADO=$SOLICITUD['estado'];
-        }
-        $conmy==null;
-    } catch(PDOException $ex) {
-        $conmy = null;
-    } catch (Exception $ex) {
-        $conmy = null;
-    }
+  try{
+      $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      $SOLICITUD=FnBuscarSolicitud($conmy, $ID, $_SESSION['CliId']);
+      $PLANTILLAS=FnListarPlantilla($conmy);
+      if(!empty($SOLICITUD['estado'])){
+          $ESTADO=$SOLICITUD['estado'];
+      }
+      $conmy==null;
+  } catch(PDOException $ex) {
+      $conmy = null;
+  } catch (Exception $ex) {
+      $conmy = null;
+  }
+  
 ?>
 <!DOCTYPE html>
 <html lang="es">

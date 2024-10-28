@@ -1,10 +1,13 @@
 <?php 
-    session_start();
+  session_start();
+  if(!isset($_SESSION['UserName']) || !isset($_SESSION['CliId'])){
+    header("location:/gesman");
+    exit();
+  }
+  require_once $_SERVER['DOCUMENT_ROOT']."/gesman/connection/ConnGesmanDb.php";
+  require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php"; 
 
-    if(!isset($_SESSION['UserName'])){
-        header("location:/gesman");
-        exit();
-    }
+  $CLIID = $_SESSION['CliId'];
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +16,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitudes | GPEM SAC</title>
+    <title>Solicitudes | GPEM S.A.C</title>
     <link rel="shortcut icon" href="/mycloud/logos/favicon.ico">
     <link rel="stylesheet" href="/mycloud/library/fontawesome-free-5.9.0-web/css/all.css">
     <link rel="stylesheet" href="/mycloud/library/bootstrap-5.0.2-dist/css/bootstrap.min.css">
@@ -23,50 +26,48 @@
 
     <style>
         a.link-colecciones {
-            color: black;
-            text-decoration: none;
+          color: black;
+          text-decoration: none;
         }
         .divselect {
-            cursor: pointer;
-            transition: all .25s ease-in-out;
+          cursor: pointer;
+          transition: all .25s ease-in-out;
         }
         .divselect:hover {
-            background-color: #ccd1d1;
-            transition: background-color .5s;
+          background-color: #ccd1d1;
+          transition: background-color .5s;
         }
 
         .select2-selection__rendered {
-            line-height: 36px !important;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
+          line-height: 36px !important;
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+          background-size: 16px 12px;
         }
         .select2-search__field{
-            border: 1px solid #ced4da !important;
-            height: 37px !important;
+          border: 1px solid #ced4da !important;
+          height: 37px !important;
         }
         .select2-search__field:focus{
-            color: #212529;
-            background-color: #fff !important;
-            border-color: #86b7fe !important;
-            outline: 0 !important;
-            box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25) !important;
+          color: #212529;
+          background-color: #fff !important;
+          border-color: #86b7fe !important;
+          outline: 0 !important;
+          box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25) !important;
         }
         .select2-container .select2-selection--single {
-            height: 37px !important;
-            border: 1px solid #ced4da !important;
+          height: 37px !important;
+          border: 1px solid #ced4da !important;
         }
         .select2-selection__arrow {
-            display: none !important;
-            /*height: 34px !important;*/
+          display: none !important;
+          /*height: 34px !important;*/
         }
     </style>
 </head>
 <body>
-    
     <?php require_once $_SERVER['DOCUMENT_ROOT'].'/gesman/menu/sidebar.php';?>
-    
     <div class="container section-top">
         <div class="row p-1 mb-3">
             <div class="col-12 border-bottom fw-bold fs-5">

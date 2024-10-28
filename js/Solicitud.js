@@ -48,25 +48,31 @@ function FnModalAgregarCheckList(){
 };
 
 async function FnAgregarCheckList(){
-    vgLoader.classList.remove('loader-full-hidden');
-    try {        
-        const formData = new FormData();
-        formData.append('solid', document.getElementById('txtId').value);
-        formData.append('plaid', document.getElementById('cbPlantilla').value);
-        formData.append('fecha', document.getElementById('dtpFecha').value);
-        const response = await fetch("/checklists/insert/AgregarCheckList.php", {
-            method: "POST",
-            body: formData
-        });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));
+  vgLoader.classList.remove('loader-full-hidden');
+  try {        
+    const formData = new FormData();
+    formData.append('solid', document.getElementById('txtId').value);
+    formData.append('plaid', document.getElementById('cbPlantilla').value);
+    formData.append('fecha', document.getElementById('dtpFecha').value);
 
-        if(!response.ok){throw new Error(`${response.status} ${response.statusText}`)}
-        const datos = await response.json();
-        if(!datos.res){throw new Error(datos.msg);}
-        setTimeout(()=>{window.location.href='/checklists/CheckList.php?id='+datos.id;},1000);
-    } catch (ex) {
-        setTimeout(()=>{vgLoader.classList.add('loader-full-hidden');},500);
-        showToast(ex.message, 'bg-danger');
-    }
+    formData.forEach((key,value)=>{
+      console.log(key,value);
+    });
+
+
+    const response = await fetch("/checklists/insert/AgregarCheckList.php", {
+      method: "POST",
+      body: formData
+    });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));
+
+    if(!response.ok){throw new Error(`${response.status} ${response.statusText}`)}
+    const datos = await response.json();
+    if(!datos.res){throw new Error(datos.msg);}
+    setTimeout(()=>{window.location.href='/checklists/CheckList.php?id='+datos.id;},1000);
+  } catch (ex) {
+      setTimeout(()=>{vgLoader.classList.add('loader-full-hidden');},500);
+      showToast(ex.message, 'bg-danger');
+  }
 }
 
 function FnModalAgregarOrden(){

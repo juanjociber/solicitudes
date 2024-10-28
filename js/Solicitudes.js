@@ -6,11 +6,10 @@ var PaginasTotal = 0;
 var PaginaActual = 0;
 
 const vgLoader = document.querySelector('.container-loader-full');
-
 window.onload = function() {
     document.getElementById('MenuSolicitudes').classList.add('menu-activo','fw-bold');
-    const datos = localStorage.getItem('gpem_solicitudes');
-    if (datos){FnMostrarRegistros(JSON.parse(datos));}
+    // const datos = localStorage.getItem('gpem_solicitudes');
+    // if (datos){FnMostrarRegistros(JSON.parse(datos));}
     vgLoader.classList.add('loader-full-hidden');
 };
 
@@ -126,61 +125,70 @@ async function FnBuscarSolicitudes(){
 }
 
 async function FnBuscarSolicitudes2(){
-    try {
-        const formData = new FormData();
-        formData.append('nombre', Nombre);
-        formData.append('equipo', Equipo);
-        formData.append('fechainicial', FechaInicial);
-        formData.append('fechafinal', FechaFinal);
-        formData.append('pagina', PaginasTotal);
+  try {
+    const formData = new FormData();
+    formData.append('nombre', Nombre);
+    formData.append('equipo', Equipo);
+    formData.append('fechainicial', FechaInicial);
+    formData.append('fechafinal', FechaFinal);
+    formData.append('pagina', PaginasTotal);
 
-        const response = await fetch('/solicitudes/search/BuscarSolicitudes.php', {
-            method:'POST',
-            body: formData
-        });/*.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));*/
+    const response = await fetch('/solicitudes/search/BuscarSolicitudes.php', {
+      method:'POST',
+      body: formData
+    });/*.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));*/
 
-        if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`);}
-        const datos = await response.json();
-        if (!datos.res) { throw new Error(`${datos.msg}`); }
+    if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`);}
+    const datos = await response.json();
+    if (!datos.res) { throw new Error(`${datos.msg}`); }
 
-        localStorage.setItem('gpem_solicitudes', JSON.stringify(datos));
-        FnMostrarRegistros(datos);        
-    } catch (ex) {
-        throw ex;
-    }
-}
-
-function FnMostrarRegistros(datos){
-    document.getElementById('tblSolicitudes').innerHTML = '';
-    let estado = '';
-    datos.data.forEach(solicitud => {
-        switch (solicitud.estado){
-            case 1:
-                estado='<span class="badge bg-danger">Anulado</span>';
-            break;
-            case 2:
-                estado='<span class="badge bg-primary">Abierto</span>';
-            break;
-            case 3:
-                estado='<span class="badge bg-success">Cerrado</span>';
-            break;
-            default:
-                estado='<span class="badge bg-light text-dark">Unknown</span>';
-        }
-
-        document.getElementById('tblSolicitudes').innerHTML +=`
-        <div class="col-12">
-            <div class="divselect border-bottom border-secondary mb-1 px-1" onclick="FnSolicitud(${solicitud.id}); return false;">
-                <div class="div d-flex justify-content-between">
-                    <p class="m-0"><span class="fw-bold">${solicitud.nombre}</span> <span class="text-secondary" style="font-size: 13px;">${solicitud.fecha}</span></p><p class="m-0">${estado}</p>
-                </div>
-                <div class="div">${solicitud.equcodigo} ${solicitud.actividades}</div>
-            </div>
-        </div>`;
+    // localStorage.setItem('gpem_solicitudes', JSON.stringify(datos));
+    FnMostrarRegistros(datos);        
+  } catch (ex) {
+    document.getElementById('tblSolicitudes').innerHTML='';
+    setTimeout(() => { vgLoader.classList.add('loader-full-hidden'); }, 300);
+    await Swal.fire({
+      title: "Aviso",
+      text: ex.message,
+      icon: "info",
+      timer: 2000
     });
-    FnPaginacion(datos.pag);
+    document.getElementById('tblSolicitudes').innerHTML+=`
+    <div class="col-12">
+      <p class="fst-italic">Haga clic en el botón Buscar para obtener resultados.</p>
+    </div>`;
+  }
 }
 
+async function FnMostrarRegistros(datos){
+  document.getElementById('tblSolicitudes').innerHTML = '';
+  let estado = '';
+  datos.data.forEach(solicitud => {
+    switch (solicitud.estado){
+      case 1:
+        estado='<span class="badge bg-danger">Anulado</span>';
+      break;
+      case 2:
+        estado='<span class="badge bg-primary">Abierto</span>';
+      break;
+      case 3:
+        estado='<span class="badge bg-success">Cerrado</span>';
+      break;
+      default:
+        estado='<span class="badge bg-light text-dark">Unknown</span>';
+    }
+    document.getElementById('tblSolicitudes').innerHTML +=`
+    <div class="col-12">
+      <div class="divselect border-bottom border-secondary mb-1 px-1" onclick="FnSolicitud(${solicitud.id}); return false;">
+        <div class="div d-flex justify-content-between">
+          <p class="m-0"><span class="fw-bold">${solicitud.nombre}</span> <span class="text-secondary" style="font-size: 13px;">${solicitud.fecha}</span></p><p class="m-0">${estado}</p>
+        </div>
+        <div class="div">${solicitud.equcodigo} ${solicitud.actividades}</div>
+      </div>
+    </div>`;
+  });
+  FnPaginacion(datos.pag);  
+}
 
 function FnPaginacion(cantidad) {
     try {
