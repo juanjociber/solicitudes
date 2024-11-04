@@ -1,6 +1,6 @@
 <?php 
     session_start();
-
+    require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/SesionData.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/gesman/connection/ConnGesmanDb.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
 
@@ -8,15 +8,20 @@
 
     try {
         $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        if(empty($_SESSION['UserName']) || empty($_SESSION['CliId'])){throw new Exception("Usuario no tiene Autorización.");}
+        if(!FnValidarSesion()){throw new Exception("Se ha perdido la conexión.");}
+        if(!FnValidarSesionManNivel1()){throw new Exception("Usuario no autorizado.");}
         if(empty($_POST['fechainicial']) || empty($_POST['fechafinal'])) {throw new Exception("Las fechas de busqueda están incompletas.");}
 
-        $equipo = empty($_POST['equipo']) ? 0 : $_POST['equipo'];
-        $nombre = empty($_POST['nombre']) ? "" : $_POST['nombre'];
-        $pagina = empty($_POST['pagina']) ? 0 : $_POST['pagina'];
-
-        $response = FnBuscarSolicitudes($conmy, $_SESSION['CliId'], $equipo, $nombre, $_POST['fechainicial'], $_POST['fechafinal'], $pagina);
+        $search=array(
+            'cliid'=>$_SESSION['gesman']['CliId'],
+            'equid'=>empty($_POST['equipo']) ? 0 : $_POST['equipo'],
+            'nombre'=>empty($_POST['nombre']) ? '' : $_POST['nombre'],
+            'fechainicial'=>$_POST['fechainicial'],
+            'fechafinal'=>$_POST['fechafinal'],
+            'pagina'=>empty($_POST['pagina']) ? 0 : $_POST['pagina']
+        );
+        
+        $response = FnBuscarSolicitudes($conmy, $search);
 
         if ($response['pag']>0) {
             $datos['res'] = true;

@@ -48,31 +48,25 @@ function FnModalAgregarCheckList(){
 };
 
 async function FnAgregarCheckList(){
-  vgLoader.classList.remove('loader-full-hidden');
-  try {        
-    const formData = new FormData();
-    formData.append('solid', document.getElementById('txtId').value);
-    formData.append('plaid', document.getElementById('cbPlantilla').value);
-    formData.append('fecha', document.getElementById('dtpFecha').value);
+    vgLoader.classList.remove('loader-full-hidden');
+    try {        
+        const formData = new FormData();
+        formData.append('solid', document.getElementById('txtId').value);
+        formData.append('plaid', document.getElementById('cbPlantilla').value);
+        formData.append('fecha', document.getElementById('dtpFecha').value);
+        const response = await fetch("/solicitudes/insert/AgregarSolicitudCheckList.php", {
+            method: "POST",
+            body: formData
+        });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));
 
-    formData.forEach((key,value)=>{
-      console.log(key,value);
-    });
-
-
-    const response = await fetch("/checklists/insert/AgregarCheckList.php", {
-      method: "POST",
-      body: formData
-    });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));
-
-    if(!response.ok){throw new Error(`${response.status} ${response.statusText}`)}
-    const datos = await response.json();
-    if(!datos.res){throw new Error(datos.msg);}
-    setTimeout(()=>{window.location.href='/checklists/CheckList.php?id='+datos.id;},1000);
-  } catch (ex) {
-      setTimeout(()=>{vgLoader.classList.add('loader-full-hidden');},500);
-      showToast(ex.message, 'bg-danger');
-  }
+        if(!response.ok){throw new Error(`${response.status} ${response.statusText}`)}
+        const datos = await response.json();
+        if(!datos.res){throw new Error(datos.msg);}
+        setTimeout(()=>{window.location.href='/checklists/CheckList.php?id='+datos.id;},1000);
+    } catch (ex) {
+        setTimeout(()=>{vgLoader.classList.add('loader-full-hidden');},500);
+        showToast(ex.message, 'bg-danger');
+    }
 }
 
 function FnModalAgregarOrden(){
@@ -91,7 +85,7 @@ async function FnAgregarOrden(){
         formData.append('tipnombre', document.getElementById("cbOrdTipo").options[document.getElementById("cbOrdTipo").selectedIndex].text);
         formData.append('nombre', document.getElementById('txtOrdNombre').value);
         formData.append('actnombre', document.getElementById('txtOrdActividad').value);
-        const response = await fetch("/gesman/insert/AgregarSolicitudOrden.php",{
+        const response = await fetch("/solicitud/insert/AgregarSolicitudOrden.php",{
             method: "POST",
             body: formData
         });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));

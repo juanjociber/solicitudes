@@ -83,49 +83,50 @@
         }
       }
 
-    function FnBuscarSolicitudes($conmy, $cliente, $equipo, $nombre, $fechainicial, $fechafinal, $pagina) {
-      try {
-        $datos = array('data'=>array(), 'pag'=>0);
-        $query = "";
+    function FnBuscarSolicitudes($conmy, $search) {
+        try {
+            $datos = array('data'=>array(), 'pag'=>0);
+            $query = "";
 
-        if(!empty($nombre)){
-          $query = " and nombre like='%".$nombre."%'";
-        }else{
-          if($equipo>0){
-            $query.=" and equid=".$equipo;
-          }
-          $query.=" and fecha between '".$fechainicial."' and '".$fechafinal."'";
+            if(!empty($search['nombre'])){
+                $query = " and nombre like='%".$search['nombre']."%'";
+            }else{
+                if($search['equid']>0){
+                    $query.=" and equid=".$search['equid'];
+                }
+                $query.=" and fecha between '".$search['fechainicial']."' and '".$search['fechafinal']."'";
+            }
+
+            $query.=" limit ".$search['pagina'].", 15";
+
+            $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_codigo, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
+            $stmt->execute(array(':CliId'=>$search['cliid']));
+			$n=$stmt->rowCount();
+            if($n>0){
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $datos['data'][]=array(
+                        'id'=>(int)$row['id'],
+                        'fecha'=>$row['fecha'],                        
+                        'nombre'=>$row['nombre'],
+                        'clinombre'=>$row['cli_nombre'],
+                        'equcodigo'=>$row['equ_codigo'],
+                        'actividades'=>$row['actividades'],
+                        'estado'=>(int)$row['estado']
+                    );
+                }
+                $datos['pag']=$n;
+            }            
+            return $datos;
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage().$msg);
         }
-        $query.=" limit ".$pagina.", 2";
-
-        $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_codigo, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
-        $stmt->execute(array(':CliId'=>$cliente));
-			  $n=$stmt->rowCount();
-        if($n>0){
-          while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $datos['data'][]=array(
-              'id'=>(int)$row['id'],
-              'fecha'=>$row['fecha'],                        
-              'nombre'=>$row['nombre'],
-              'clinombre'=>$row['cli_nombre'],
-              'equcodigo'=>$row['equ_codigo'],
-              'actividades'=>$row['actividades'],
-              'estado'=>(int)$row['estado']
-            );
-          }
-          $datos['pag']=$n;
-        }            
-        return $datos;
-      } catch (PDOException $e) {
-        throw new Exception($e->getMessage().$msg);
-      }
     }
 
     function FnFinalizarSolicitud($conmy, $solicitud) {
         try {
             $res=false;
             $stmt = $conmy->prepare("update tblsolicitudes set estado=3, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
-            $stmt->execute(array(':Actualizacion'=>$solicitud['Actualizacion'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
+            $stmt->execute(array(':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
             if($stmt->rowCount()>0){
                 $res=true;
             }
@@ -139,7 +140,7 @@
         try {
             $res=false;
             $stmt=$conmy->prepare("update tblsolicitudes set actividades=:Actividades, observaciones=:Observaciones, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
-            $stmt->execute(array(':Actividades'=>$solicitud['Actividades'], ':Observaciones'=>$solicitud['Observaciones'], ':Actualizacion'=>$solicitud['Actualizacion'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
+            $stmt->execute(array(':Actividades'=>$solicitud['Actividades'], ':Observaciones'=>$solicitud['Observaciones'], ':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
             if($stmt->rowCount()>0){
                 $res=true;
             }
@@ -153,7 +154,7 @@
         try {
             $res=false;
             $stmt=$conmy->prepare("update tblsolicitudes set equ_nombre=:EquNombre, equ_marca=:EquMarca, equ_modelo=:EquModelo, equ_placa=:EquPlaca, equ_serie=:EquSerie, equ_motor=:EquMotor, equ_transmision=:EquTransmision, equ_diferencial=:EquDiferencial, equ_km=:EquKm, equ_hm=:EquHm, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
-            $stmt->execute(array(':EquNombre'=>$solicitud['EquNombre'], ':EquMarca'=>$solicitud['EquMarca'], ':EquModelo'=>$solicitud['EquModelo'], ':EquPlaca'=>$solicitud['EquPlaca'], ':EquSerie'=>$solicitud['EquSerie'], ':EquMotor'=>$solicitud['EquMotor'], ':EquTransmision'=>$solicitud['EquTransmision'], ':EquDiferencial'=>$solicitud['EquDiferencial'], ':EquKm'=>$solicitud['EquKm'], ':EquHm'=>$solicitud['EquHm'], ':Actualizacion'=>$solicitud['Actualizacion'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
+            $stmt->execute(array(':EquNombre'=>$solicitud['EquNombre'], ':EquMarca'=>$solicitud['EquMarca'], ':EquModelo'=>$solicitud['EquModelo'], ':EquPlaca'=>$solicitud['EquPlaca'], ':EquSerie'=>$solicitud['EquSerie'], ':EquMotor'=>$solicitud['EquMotor'], ':EquTransmision'=>$solicitud['EquTransmision'], ':EquDiferencial'=>$solicitud['EquDiferencial'], ':EquKm'=>$solicitud['EquKm'], ':EquHm'=>$solicitud['EquHm'], ':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
             if($stmt->rowCount()>0){
                 $res=true;
             }
@@ -167,7 +168,7 @@
         try {
             $res=false;
             $stmt=$conmy->prepare("update tblsolicitudes set cli_direccion=:CliDireccion, cli_contacto=:CliContacto, cli_telefono=:CliTelefono, cli_correo=:CliCorreo, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
-            $stmt->execute(array(':CliDireccion'=>$solicitud['CliDireccion'], ':CliContacto'=>$solicitud['CliContacto'], ':CliTelefono'=>$solicitud['CliTelefono'], ':CliCorreo'=>$solicitud['CliCorreo'], ':Actualizacion'=>$solicitud['Actualizacion'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
+            $stmt->execute(array(':CliDireccion'=>$solicitud['CliDireccion'], ':CliContacto'=>$solicitud['CliContacto'], ':CliTelefono'=>$solicitud['CliTelefono'], ':CliCorreo'=>$solicitud['CliCorreo'], ':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
             if($stmt->rowCount()>0){
                 $res=true;
             }
@@ -177,78 +178,18 @@
         }
     }
 
-    function FnBuscarEquipo($conmy, $id, $cliid) {
-        try {
-            $stmt=$conmy->prepare("select idactivo, codigo, activo, grupo, marca, modelo, serie, anio, fabricante, procedencia, caracteristicas, ubicacion from man_activos where idactivo=:Id and idcliente=:CliId;");
-            $stmt->execute(array(':Id'=>$id, ':CliId'=>$cliid));
-            $equipo = new stdClass();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $equipo->id = $row['idactivo'];
-                $equipo->codigo = $row['codigo'];
-                $equipo->nombre = $row['activo'];
-                $equipo->flota = $row['grupo'];
-                $equipo->marca = $row['marca'];
-                $equipo->modelo = $row['modelo'];
-                $equipo->serie = $row['serie'];
-                $equipo->anio = $row['anio'];
-                $equipo->fabricante = $row['fabricante'];
-                $equipo->procedencia = $row['procedencia'];
-                $equipo->datos = $row['caracteristicas'];
-                $equipo->ubicacion = $row['ubicacion'];
-            }
-            return $equipo;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
-    function FnListarEquipos($conmy, $cliid, $codigo) {
-        try {
-            $data=array();
-            $stmt=$conmy->prepare("select idactivo, codigo from man_activos where idcliente=:CliId and codigo like :Codigo and estado=2 limit 15;");
-            $stmt->execute(array(':CliId'=>$cliid, ':Codigo'=>"%$codigo%"));
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $data[]=array(
-                    'id'=>$row['idactivo'],
-                    'codigo'=>$row['codigo']
-                );
-            }
-            return $data;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
     function FnListarPlantilla($conmy) {
         try {
             $data=array();
-            $stmt=$conmy->prepare("select id, tipo from tblchkplantillas;");
+            $stmt=$conmy->prepare("select id, nombre from tblchkplantillas;");
             $stmt->execute();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $data[]=array(
                     'id'=>$row['id'],
-                    'nombre'=>$row['tipo']
+                    'nombre'=>$row['nombre']
                 );
             }
             return $data;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
-    function FnBuscarCliente($conmy, $id) {
-        try {
-            $stmt = $conmy->prepare("select idcliente, ruc, razonsocial, nombre, estado from man_clientes where idcliente=:Id;");
-            $stmt->execute(array(':Id'=>$id));
-            $cliente = new stdClass();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $cliente->id = $row['idcliente'];
-                $cliente->ruc = $row['ruc'];
-                $cliente->nombre = $row['razonsocial'];
-                $cliente->alias = $row['nombre'];
-                $cliente->estado = $row['estado'];
-            }
-            return $cliente;
         } catch (PDOException $e) {
             throw new Exception($e->getMessage());
         }

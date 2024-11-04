@@ -1,12 +1,22 @@
 <?php
     session_start();
+    require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/SesionData.php";
 
-    if(empty($_SESSION['UserName']) || empty($_SESSION['CliId']) || empty($_SESSION['CliNombre'])){
+    if(!FnValidarSesion()){
         header("location:/gesman/Salir.php");
         exit();
     }
 
-    $ID=empty($_GET['id']) ? 0 : $_GET['id'];
+    if(!FnValidarSesionManNivel2()){
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
+
+    if(empty($_GET['id'])){
+        header("HTTP/1.1 404 Not Found");
+        exit();
+    }
+
     $ESTADO=0;
     $SOLICITUD=array();
 
@@ -15,7 +25,7 @@
 
     try{
         $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $SOLICITUD=FnBuscarSolicitud($conmy, $ID, $_SESSION['CliId']);
+        $SOLICITUD=FnBuscarSolicitud($conmy, $_GET['id'], $_SESSION['gesman']['CliId']);
         if(!empty($SOLICITUD['estado'])){
             $ESTADO=$SOLICITUD['estado'];
         }
@@ -53,8 +63,8 @@
 
         <div class="row border-bottom mb-3 fs-5">
             <div class="col-12 fw-bold" style="display:flex; justify-content:space-between;">
-                <p class="m-0 p-0"><?php echo $_SESSION['CliNombre'];?></p>
-                <input type="hidden" id="txtId" value="<?php echo $ID;?>">
+                <p class="m-0 p-0"><?php echo $_SESSION['gesman']['CliNombre'];?></p>
+                <input type="hidden" id="txtId" value="<?php echo $_GET['id'];?>">
                 <p class="m-0 p-0 text-center text-secondary"><?php echo empty($SOLICITUD['nombre'])?null:$SOLICITUD['nombre'];?></p>
             </div>
         </div>
@@ -63,9 +73,9 @@
             <div class="col-12">
                 <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item fw-bold"><a href="/solicitudes/EditarSolicitud.php?id=<?php echo $ID;?>" class="text-decoration-none">SOLICITUD</a></li>
+                        <li class="breadcrumb-item fw-bold"><a href="/solicitudes/EditarSolicitud.php?id=<?php echo $_GET['id'];?>" class="text-decoration-none">SOLICITUD</a></li>
                         <li class="breadcrumb-item active fw-bold" aria-current="page">CLIENTE</li>
-                        <li class="breadcrumb-item fw-bold"><a href="/solicitudes/EditarSolicitudEquipo.php?id=<?php echo $ID;?>" class="text-decoration-none">EQUIPO</a></li>
+                        <li class="breadcrumb-item fw-bold"><a href="/solicitudes/EditarSolicitudEquipo.php?id=<?php echo $_GET['id'];?>" class="text-decoration-none">EQUIPO</a></li>
                     </ol>
                 </nav>
             </div>

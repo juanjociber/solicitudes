@@ -1,6 +1,6 @@
 <?php 
     session_start();
-
+    require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/SesionData.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/gesman/connection/ConnGesmanDb.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
 
@@ -8,13 +8,13 @@
 
     try {
         $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        if(empty($_SESSION['CliId']) && empty($_SESSION['UserName'])){throw new Exception("Usuario no tiene Autorización.");}
+        if(!FnValidarSesion()){throw new Exception("Se ha perdido la conexión.");}
+        if(!FnValidarSesionManNivel1()){throw new Exception("Usuario no autorizado.");}
         if (empty($_POST['id'])) {throw new Exception("La información está incompleta.");}
 
         $solicitud = array();
         $solicitud['Id']=$_POST['id'];
-        $solicitud['CliId']=$_SESSION['CliId'];
+        $solicitud['CliId']=$_SESSION['gesman']['CliId'];
         $solicitud['EquNombre']=empty($_POST['equnombre'])?null:$_POST['equnombre'];
         $solicitud['EquMarca']=empty($_POST['equmarca'])?null:$_POST['equmarca'];
         $solicitud['EquModelo']=empty($_POST['equmodelo'])?null:$_POST['equmodelo'];
@@ -25,7 +25,7 @@
         $solicitud['EquDiferencial']=empty($_POST['equdiferencial'])?null:$_POST['equdiferencial'];
         $solicitud['EquKm']=empty($_POST['equkm'])?0:$_POST['equkm'];
         $solicitud['EquHm']=empty($_POST['equhm'])?0:$_POST['equhm'];
-        $solicitud['Actualizacion']=date('Ymd-His').' ('.$_SESSION['UserName'].')';
+        $solicitud['Usuario']=date('Ymd-His').' ('.$_SESSION['gesman']['Nombre'].')';
 
         if (FnModificarSolicitudEquipo($conmy, $solicitud)) {
             $datos['res'] = true;

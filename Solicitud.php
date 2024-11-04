@@ -1,32 +1,42 @@
 <?php
-  session_start();
+    session_start();
+    require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/SesionData.php";
 
-  if(empty($_SESSION['UserName']) || empty($_SESSION['CliId']) || empty($_SESSION['CliNombre'])){
-    header("location:/gesman/Salir.php");
-    exit();
-  }
-  $ID=empty($_GET['id']) ? 0 : $_GET['id'];
-  $ESTADO=0;
-  $SOLICITUD=array();
-  $PLANTILLAS=array();
+    if(!FnValidarSesion()){
+        header("location:/gesman/Salir.php");
+        exit();
+    }
 
-  require_once $_SERVER['DOCUMENT_ROOT'].'/gesman/connection/ConnGesmanDb.php';
-  require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
+    if(!FnValidarSesionManNivel2()){
+        header("HTTP/1.1 403 Forbidden");
+        exit();
+    }
 
-  try{
-      $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      $SOLICITUD=FnBuscarSolicitud($conmy, $ID, $_SESSION['CliId']);
-      $PLANTILLAS=FnListarPlantilla($conmy);
-      if(!empty($SOLICITUD['estado'])){
-          $ESTADO=$SOLICITUD['estado'];
-      }
-      $conmy==null;
-  } catch(PDOException $ex) {
-      $conmy = null;
-  } catch (Exception $ex) {
-      $conmy = null;
-  }
-  
+    if(empty($_GET['id'])){
+        header("HTTP/1.1 404 Not Found");
+        exit();
+    }
+
+    $ESTADO=0;
+    $SOLICITUD=array();
+    $PLANTILLAS=array();
+
+    require_once $_SERVER['DOCUMENT_ROOT'].'/gesman/connection/ConnGesmanDb.php';
+    require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
+
+    try{
+        $conmy->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $SOLICITUD=FnBuscarSolicitud($conmy, $_GET['id'], $_SESSION['gesman']['CliId']);
+        $PLANTILLAS=FnListarPlantilla($conmy);
+        if(!empty($SOLICITUD['estado'])){
+            $ESTADO=$SOLICITUD['estado'];
+        }
+        $conmy==null;
+    } catch(PDOException $ex) {
+        $conmy = null;
+    } catch (Exception $ex) {
+        $conmy = null;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -71,8 +81,8 @@
 
         <div class="row border-bottom mb-2 fs-5">
             <div class="col-12 fw-bold d-flex justify-content-between">
-                <p class="m-0 p-0"><?php echo $_SESSION['CliNombre'];?></p>
-                <input type="hidden" id="txtId" value="<?php echo $ID;?>">
+                <p class="m-0 p-0"><?php echo $_SESSION['gesman']['CliNombre'];?></p>
+                <input type="hidden" id="txtId" value="<?php echo $_GET['id'];?>">
                 <p class="m-0 p-0 text-center text-secondary"><?php echo empty($SOLICITUD['nombre'])?null:$SOLICITUD['nombre'];?></p>
             </div>
         </div>
@@ -355,7 +365,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">NUEVO CHECKLIST</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">AGREGAR CHECKLIST</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>                
                 <div class="modal-body">
