@@ -3,6 +3,7 @@
     require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/SesionData.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/gesman/connection/ConnGesmanDb.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/OrdenesData.php";
+    require_once $_SERVER['DOCUMENT_ROOT']."/gesman/data/EquiposData.php";
     require_once $_SERVER['DOCUMENT_ROOT']."/solicitudes/data/SolicitudesData.php";
 
     $datos=array('res'=>false, 'id'=>0, 'msg'=>'Error General.');
@@ -17,18 +18,23 @@
         $solicitud=array();
         
         $solicitud=FnBuscarSolicitud($conmy, $_POST['solid'], $_SESSION['gesman']['CliId']);
-        if(empty($solicitud['id'])){throw new Exception("No se encontró la Solicitud.");}
+        if(empty($solicitud['id'])){throw new Exception("La Solicitud no esta disponible.");}
 
-        $orden['equid']=$solicitud['equid'];
+        $equipo=FnBuscarEquipo($conmy, $_SESSION['gesman']['CliId'], $solicitud['equid']);
+        if(empty($equipo['id'])){throw new Exception("El Equipo no esta disponible.");}
+
+        $orden['equid']=$equipo['id'];
         $orden['tipid']=$_POST['tipid'];
-        $orden['sisid']=0;
+        $orden['famid']=$equipo['famid'];
+        $orden['sisid']=empty($_POST['sisid'])?0:$_POST['sisid'];
         $orden['oriid']=0;
         $orden['actid']=0;
         $orden['cliid']=$_SESSION['gesman']['CliId'];
         $orden['nombre']=$_POST['nombre'];
-        $orden['equcodigo']=$solicitud['equcodigo'];
+        $orden['equnombre']=$solicitud['equnombre'];
         $orden['tipnombre']=$_POST['tipnombre'];
-        $orden['sisnombre']=null;
+        $orden['famnombre']=$equipo['famnombre'];
+        $orden['sisnombre']=empty($_POST['sisnombre'])?null:$_POST['sisnombre'];
         $orden['orinombre']=null;
         $orden['fecha']=$_POST['fecha'];
         $orden['tiptrabajo']="TRABAJO_LIVIANO";
@@ -40,7 +46,7 @@
         $orden['supervisor']=$_SESSION['gesman']['Alias'];
         $orden['clicontacto']=$solicitud['clicontacto'];
         $orden['usuario']=date('Ymd-His').' ('.$_SESSION['gesman']['Nombre'].')';
-
+        
         $id=FnAgregarOrden($conmy, $orden);
         if(empty($id)){throw new Exception("Error generando la Órden.");}
 

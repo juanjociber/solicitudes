@@ -83,12 +83,8 @@
 
         <div class="row mb-2">
             <div class="col-6 col-sm-4 mb-2">
-                <p class="m-0 text-secondary" style="font-size: 13px;">Código:</p>
-                <input type="text" class="form-control" value="<?php if(!empty($SOLICITUD['equcodigo'])){echo $SOLICITUD['equcodigo'];};?>" readonly/>
-            </div>
-            <div class="col-6 col-sm-4 mb-2">
                 <p class="m-0 text-secondary" style="font-size: 13px;">Nombre</p> 
-                <input type="text" id="txtEquNombre" class="form-control" value="<?php if(!empty($SOLICITUD['equnombre'])){echo $SOLICITUD['equnombre'];};?>"/>
+                <input type="text" id="txtEquNombre" class="form-control" value="<?php if(!empty($SOLICITUD['equnombre'])){echo $SOLICITUD['equnombre'];};?>" readonly/>
             </div>
             <div class="col-6 col-sm-4 mb-2">
                 <p class="m-0 text-secondary" style="font-size: 13px;">Placa</p> 
@@ -105,18 +101,6 @@
             <div class="col-6 col-sm-4 mb-2">
                 <p class="m-0 text-secondary" style="font-size: 13px;">Serie</p> 
                 <input type="text" id="txtEquSerie" class="form-control" value="<?php if(!empty($SOLICITUD['equserie'])){echo $SOLICITUD['equserie'];};?>"/>
-            </div>
-            <div class="col-6 col-sm-4 mb-2">
-                <p class="m-0 text-secondary" style="font-size: 13px;">Motor</p> 
-                <input type="text" id="txtEquMotor" class="form-control" value="<?php if(!empty($SOLICITUD['equmotor'])){echo $SOLICITUD['equmotor'];};?>"/>
-            </div>
-            <div class="col-6 col-sm-4 mb-2">
-                <p class="m-0 text-secondary" style="font-size: 13px;">Diferencial</p> 
-                <input type="text" id="txtEquDiferencial" class="form-control" value="<?php if(!empty($SOLICITUD['equdiferencial'])){echo $SOLICITUD['equdiferencial'];};?>"/>
-            </div>
-            <div class="col-6 col-sm-4 mb-2">
-                <p class="m-0 text-secondary" style="font-size: 13px;">Transmisión</p> 
-                <input type="text" id="txtEquTransmision" class="form-control" value="<?php if(!empty($SOLICITUD['equtransmision'])){echo $SOLICITUD['equtransmision'];};?>"/>
             </div>
             <div class="col-6 col-sm-4 mb-2">
                 <p class="m-0 text-secondary" style="font-size: 13px;">Km</p> 

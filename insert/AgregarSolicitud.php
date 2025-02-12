@@ -16,38 +16,34 @@
 
         $solicitud = array();
 
-        $solicitud['Fecha']=date('Y-m-d');
-        $solicitud['Usuario']=date('Ymd-His').' ('.$_SESSION['gesman']['Nombre'].')';
-        $solicitud['Supervisor']=$_SESSION['gesman']['Alias'];
-        $solicitud['Actividades']=$_POST['actividades'];
-        $solicitud['Observaciones']=empty($_POST['observaciones']) ? null : $_POST['observaciones'];
+        $solicitud['fecha']=date('Y-m-d');
+        $solicitud['usuario']=date('Ymd-His').' ('.$_SESSION['gesman']['Nombre'].')';
+        $solicitud['supervisor']=$_SESSION['gesman']['Alias'];
+        $solicitud['actividades']=$_POST['actividades'];
+        $solicitud['observaciones']=empty($_POST['observaciones']) ? null : $_POST['observaciones'];
 
         $cliente=FnBuscarCliente($conmy, $_SESSION['gesman']['CliId']);
         if(empty($cliente['id'])){ throw new Exception("No se encontró el Cliente."); }
 
-        $solicitud['CliId']=$cliente['id'];
-        $solicitud['CliRuc']=$cliente['ruc'];
-        $solicitud['CliNombre']=$cliente['nombre'];
-        $solicitud['CliDireccion']=$cliente['direccion'];
-        $solicitud['CliContacto']=null;
-        $solicitud['CliTelefono']=null;
-        $solicitud['CliCorreo']=null;
+        $solicitud['cliid']=$cliente['id'];
+        $solicitud['cliruc']=$cliente['ruc'];
+        $solicitud['clinombre']=$cliente['nombre'];
+        $solicitud['clidireccion']=$cliente['direccion'];
+        $solicitud['clicontacto']=null;
+        $solicitud['clitelefono']=null;
+        $solicitud['clicorreo']=null;
 
         $equipo=FnBuscarEquipo($conmy, $_SESSION['gesman']['CliId'], $_POST['equid']);
         if(empty($equipo['id'])){ throw new Exception("No se encontró el Equipo."); }
 
-        $solicitud['EquId']=$equipo['id'];
-        $solicitud['EquCodigo']=$equipo['codigo'];
-        $solicitud['EquNombre']=$equipo['nombre'];
-        $solicitud['EquMarca']=$equipo['marca'];
-        $solicitud['EquModelo']=$equipo['modelo'];
-        $solicitud['EquPlaca']=$equipo['placa'];
-        $solicitud['EquSerie']=$equipo['serie'];
-        $solicitud['EquMotor']=$equipo['motor'];
-        $solicitud['EquDiferencial']=$equipo['diferencial'];
-        $solicitud['EquTransmision']=$equipo['transmision'];
-        $solicitud['EquKm']=empty($_POST['equkm']) ? 0 : $_POST['equkm'];
-        $solicitud['EquHm']=empty($_POST['equhm']) ? 0 : $_POST['equhm'];
+        $solicitud['equid']=$equipo['id'];
+        $solicitud['equnombre']=$equipo['nombre'];
+        $solicitud['equmarca']=$equipo['marca'];
+        $solicitud['equmodelo']=$equipo['modelo'];
+        $solicitud['equplaca']=$equipo['placa'];
+        $solicitud['equserie']=$equipo['serie'];
+        $solicitud['equkm']=empty($_POST['equkm']) ? 0 : $_POST['equkm'];
+        $solicitud['equhm']=empty($_POST['equhm']) ? 0 : $_POST['equhm'];
 
         $id=FnRegistrarSolicitud($conmy, $solicitud);
         if(empty($id)){throw new Exception("Error generando la Solicitud.");}

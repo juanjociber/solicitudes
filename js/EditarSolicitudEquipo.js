@@ -10,14 +10,10 @@ async function FnModificarSolicitudEquipo(){
     try {
         const formData = new FormData();
         formData.append('id', document.getElementById('txtId').value);
-        formData.append('equnombre', document.getElementById('txtEquNombre').value);
         formData.append('equmarca', document.getElementById('txtEquMarca').value);
         formData.append('equmodelo', document.getElementById('txtEquModelo').value);
         formData.append('equplaca', document.getElementById('txtEquPlaca').value);
         formData.append('equserie', document.getElementById('txtEquSerie').value);
-        formData.append('equmotor', document.getElementById('txtEquMotor').value);
-        formData.append('equdiferencial', document.getElementById('txtEquDiferencial').value);
-        formData.append('equtransmision', document.getElementById('txtEquTransmision').value);
         formData.append('equkm', document.getElementById('txtEquKm').value);
         formData.append('equhm', document.getElementById('txtEquHm').value);
 

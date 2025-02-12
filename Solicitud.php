@@ -37,6 +37,8 @@
     } catch (Exception $ex) {
         $conmy = null;
     }
+
+    
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -207,18 +209,9 @@
 
         <div class="row mb-2">
             <div class="col-6 col-sm-4 mb-1">
-                <p class="m-0 text-secondary" style="font-size: 13px;">Código</p> 
-                <p class="m-0 p-0"><?php echo empty($SOLICITUD['equcodigo'])?'UNKNOWN':$SOLICITUD['equcodigo'];?></p>
+                <p class="m-0 text-secondary" style="font-size: 13px;">Nombre</p> 
+                <p class="m-0 p-0"><?php echo empty($SOLICITUD['equnombre'])?'UNKNOWN':$SOLICITUD['equnombre'];?></p>
             </div>
-            <?php
-                if(!empty($SOLICITUD['equnombre'])){
-                    echo '
-                    <div class="col-6 col-sm-4 mb-1">
-                        <p class="m-0 text-secondary" style="font-size: 13px;">Nombre</p> 
-                        <p class="m-0 p-0">'.$SOLICITUD['equnombre'].'</p>
-                    </div>';
-                }
-            ?>
             <?php
                 if(!empty($SOLICITUD['equplaca'])){
                     echo '
@@ -252,33 +245,6 @@
                     <div class="col-6 col-sm-4 mb-1">
                         <p class="m-0 text-secondary" style="font-size: 13px;">Serie</p> 
                         <p class="m-0 p-0">'.$SOLICITUD['equserie'].'</p>
-                    </div>';
-                }
-            ?>
-            <?php
-                if(!empty($SOLICITUD['equmotor'])){
-                    echo '
-                    <div class="col-6 col-sm-4 mb-1">
-                        <p class="m-0 text-secondary" style="font-size: 13px;">Motor</p> 
-                        <p class="m-0 p-0">'.$SOLICITUD['equmotor'].'</p>
-                    </div>';
-                }
-            ?>
-            <?php
-                if(!empty($SOLICITUD['equdiferencial'])){
-                    echo '
-                    <div class="col-6 col-sm-4 mb-1">
-                        <p class="m-0 text-secondary" style="font-size: 13px;">Diferencial</p> 
-                        <p class="m-0 p-0">'.$SOLICITUD['equdiferencial'].'</p>
-                    </div>';
-                }
-            ?>
-            <?php
-                if(!empty($SOLICITUD['equtransmision'])){
-                    echo '
-                    <div class="col-6 col-sm-4 mb-1">
-                        <p class="m-0 text-secondary" style="font-size: 13px;">Transmisión</p> 
-                        <p class="m-0 p-0">'.$SOLICITUD['equtransmision'].'</p>
                     </div>';
                 }
             ?>
@@ -335,9 +301,9 @@
                             <p class="m-0" style="font-size:12px;">Tipo</p>
                             <select class="form-select" id="cbOrdTipo">
                                 <option value="0">Seleccionar</option>
-                                <option value="1">CORRECTIVA</option>
-                                <option value="2">PREVENTIVA</option>
-                                <option value="3">INTERNA</option>
+                                <option value="1">CORRECTIVO</option>
+                                <option value="2">PREVENTIVO</option>
+                                <option value="3">INTERNO</option>
                             </select>
                         </div>
                         <div class="col-6 mb-2">

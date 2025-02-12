@@ -2,32 +2,27 @@
     function FnRegistrarSolicitud($conmy, $solicitud) {
         try {
             $stmt = $conmy->prepare("CALL spman_agregarsolicitud(:_cliid, :_equid, :_fecha, :_cliruc, :_clinombre, :_clidireccion, :_clicontacto, :_clitelefono, 
-            :_clicorreo, :_supervisor, :_equcodigo, :_equnombre, :_equmarca, :_equmodelo, :_equplaca, :_equserie, :_equmotor, :_equtransmision, :_equdiferencial, 
-            :_equkm, :_equhm, :_actividades, :_observaciones, :_usuario, @_id)");
-            $stmt->bindParam(':_cliid', $solicitud['CliId'], PDO::PARAM_INT);
-            $stmt->bindParam(':_equid', $solicitud['EquId'], PDO::PARAM_INT);
-            $stmt->bindParam(':_fecha', $solicitud['Fecha'], PDO::PARAM_STR);
-            $stmt->bindParam(':_cliruc', $solicitud['CliRuc'], PDO::PARAM_STR);
-            $stmt->bindParam(':_clinombre', $solicitud['CliNombre'], PDO::PARAM_STR);
-            $stmt->bindParam(':_clidireccion', $solicitud['CliDireccion'], PDO::PARAM_STR);
-            $stmt->bindParam(':_clicontacto', $solicitud['CliContacto'], PDO::PARAM_STR);
-            $stmt->bindParam(':_clitelefono', $solicitud['CliTelefono'], PDO::PARAM_STR);
-            $stmt->bindParam(':_clicorreo', $solicitud['CliCorreo'], PDO::PARAM_STR);
-            $stmt->bindParam(':_supervisor', $solicitud['Supervisor'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equcodigo', $solicitud['EquCodigo'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equnombre', $solicitud['EquNombre'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equmarca', $solicitud['EquMarca'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equmodelo', $solicitud['EquModelo'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equplaca', $solicitud['EquPlaca'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equserie', $solicitud['EquSerie'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equmotor', $solicitud['EquMotor'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equtransmision', $solicitud['EquTransmision'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equdiferencial', $solicitud['EquDiferencial'], PDO::PARAM_STR);
-            $stmt->bindParam(':_equkm', $solicitud['EquKm'], PDO::PARAM_INT);
-            $stmt->bindParam(':_equhm', $solicitud['EquHm'], PDO::PARAM_INT);
-            $stmt->bindParam(':_actividades', $solicitud['Actividades'], PDO::PARAM_STR);
-            $stmt->bindParam(':_observaciones', $solicitud['Observaciones'], PDO::PARAM_STR);
-            $stmt->bindParam(':_usuario', $solicitud['Usuario'], PDO::PARAM_STR);
+            :_clicorreo, :_supervisor, :_equnombre, :_equmarca, :_equmodelo, :_equplaca, :_equserie, :_equkm, :_equhm, :_actividades, :_observaciones, :_usuario, @_id)");
+            $stmt->bindParam(':_cliid', $solicitud['cliid'], PDO::PARAM_INT);
+            $stmt->bindParam(':_equid', $solicitud['equid'], PDO::PARAM_INT);
+            $stmt->bindParam(':_fecha', $solicitud['fecha'], PDO::PARAM_STR);
+            $stmt->bindParam(':_cliruc', $solicitud['cliruc'], PDO::PARAM_STR);
+            $stmt->bindParam(':_clinombre', $solicitud['clinombre'], PDO::PARAM_STR);
+            $stmt->bindParam(':_clidireccion', $solicitud['clidireccion'], PDO::PARAM_STR);
+            $stmt->bindParam(':_clicontacto', $solicitud['clicontacto'], PDO::PARAM_STR);
+            $stmt->bindParam(':_clitelefono', $solicitud['clitelefono'], PDO::PARAM_STR);
+            $stmt->bindParam(':_clicorreo', $solicitud['clicorreo'], PDO::PARAM_STR);
+            $stmt->bindParam(':_supervisor', $solicitud['supervisor'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equnombre', $solicitud['equnombre'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equmarca', $solicitud['equmarca'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equmodelo', $solicitud['equmodelo'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equplaca', $solicitud['equplaca'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equserie', $solicitud['equserie'], PDO::PARAM_STR);
+            $stmt->bindParam(':_equkm', $solicitud['equkm'], PDO::PARAM_INT);
+            $stmt->bindParam(':_equhm', $solicitud['equhm'], PDO::PARAM_INT);
+            $stmt->bindParam(':_actividades', $solicitud['actividades'], PDO::PARAM_STR);
+            $stmt->bindParam(':_observaciones', $solicitud['observaciones'], PDO::PARAM_STR);
+            $stmt->bindParam(':_usuario', $solicitud['usuario'], PDO::PARAM_STR);
             $stmt->execute();
 
             $stmt = $conmy->query("SELECT @_id as id");
@@ -43,8 +38,8 @@
         try {
             $datos=array();
 
-            $stmt = $conmy->prepare("select id, equid, fecha, nombre, cli_ruc, cli_nombre, cli_direccion, cli_contacto, cli_telefono, cli_correo, supervisor, equ_codigo, equ_nombre, 
-            equ_marca, equ_modelo, equ_placa, equ_serie, equ_motor, equ_transmision, equ_diferencial, equ_km, equ_hm, actividades, observaciones, estado FROM tblsolicitudes WHERE id=:Id and cliid=:CliId;");
+            $stmt = $conmy->prepare("select id, equid, fecha, nombre, cli_ruc, cli_nombre, cli_direccion, cli_contacto, cli_telefono, cli_correo, supervisor, equ_nombre, 
+            equ_marca, equ_modelo, equ_placa, equ_serie, equ_km, equ_hm, actividades, observaciones, estado FROM tblsolicitudes WHERE id=:Id and cliid=:CliId;");
             $stmt->execute(array(':Id'=>$id, ':CliId'=>$cliid));
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -60,15 +55,11 @@
                 $datos['clitelefono']=$row['cli_telefono'];
                 $datos['clicorreo']=$row['cli_correo'];
                 $datos['supervisor']=$row['supervisor'];
-                $datos['equcodigo']=$row['equ_codigo'];
                 $datos['equnombre']=$row['equ_nombre'];
                 $datos['equmarca']=$row['equ_marca'];
                 $datos['equmodelo']=$row['equ_modelo'];
                 $datos['equplaca']=$row['equ_placa'];
                 $datos['equserie']=$row['equ_serie'];
-                $datos['equmotor']=$row['equ_motor'];
-                $datos['equtransmision']=$row['equ_transmision'];
-                $datos['equdiferencial']=$row['equ_diferencial'];
                 $datos['equkm']=$row['equ_km'];
                 $datos['equhm']=$row['equ_hm'];
                 $datos['actividades']=$row['actividades'];
@@ -99,7 +90,7 @@
 
             $query.=" limit ".$search['pagina'].", 15";
 
-            $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_codigo, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
+            $stmt = $conmy->prepare("select id, fecha, nombre, cli_nombre, equ_nombre, actividades, estado from tblsolicitudes where cliid=:CliId".$query.";");
             $stmt->execute(array(':CliId'=>$search['cliid']));
 			$n=$stmt->rowCount();
             if($n>0){
@@ -109,7 +100,7 @@
                         'fecha'=>$row['fecha'],                        
                         'nombre'=>$row['nombre'],
                         'clinombre'=>$row['cli_nombre'],
-                        'equcodigo'=>$row['equ_codigo'],
+                        'equnombre'=>$row['equ_nombre'],
                         'actividades'=>$row['actividades'],
                         'estado'=>(int)$row['estado']
                     );
@@ -117,8 +108,8 @@
                 $datos['pag']=$n;
             }            
             return $datos;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage().$msg);
+        } catch (PDOException $ex) {
+            throw $ex;
         }
     }
 
@@ -153,8 +144,8 @@
     function FnModificarSolicitudEquipo($conmy, $solicitud) {
         try {
             $res=false;
-            $stmt=$conmy->prepare("update tblsolicitudes set equ_nombre=:EquNombre, equ_marca=:EquMarca, equ_modelo=:EquModelo, equ_placa=:EquPlaca, equ_serie=:EquSerie, equ_motor=:EquMotor, equ_transmision=:EquTransmision, equ_diferencial=:EquDiferencial, equ_km=:EquKm, equ_hm=:EquHm, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
-            $stmt->execute(array(':EquNombre'=>$solicitud['EquNombre'], ':EquMarca'=>$solicitud['EquMarca'], ':EquModelo'=>$solicitud['EquModelo'], ':EquPlaca'=>$solicitud['EquPlaca'], ':EquSerie'=>$solicitud['EquSerie'], ':EquMotor'=>$solicitud['EquMotor'], ':EquTransmision'=>$solicitud['EquTransmision'], ':EquDiferencial'=>$solicitud['EquDiferencial'], ':EquKm'=>$solicitud['EquKm'], ':EquHm'=>$solicitud['EquHm'], ':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
+            $stmt=$conmy->prepare("update tblsolicitudes set equ_marca=:EquMarca, equ_modelo=:EquModelo, equ_placa=:EquPlaca, equ_serie=:EquSerie, equ_km=:EquKm, equ_hm=:EquHm, actualizacion=:Actualizacion where id=:Id and cliid=:CliId and estado=2;");
+            $stmt->execute(array(':EquMarca'=>$solicitud['EquMarca'], ':EquModelo'=>$solicitud['EquModelo'], ':EquPlaca'=>$solicitud['EquPlaca'], ':EquSerie'=>$solicitud['EquSerie'], ':EquKm'=>$solicitud['EquKm'], ':EquHm'=>$solicitud['EquHm'], ':Actualizacion'=>$solicitud['Usuario'], ':Id'=>$solicitud['Id'], ':CliId'=>$solicitud['CliId']));
             if($stmt->rowCount()>0){
                 $res=true;
             }
@@ -179,19 +170,19 @@
     }
 
     function FnListarPlantilla($conmy) {
-        try {
-            $data=array();
-            $stmt=$conmy->prepare("select id, nombre from tblchkplantillas;");
-            $stmt->execute();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $data[]=array(
-                    'id'=>$row['id'],
-                    'nombre'=>$row['nombre']
-                );
-            }
-            return $data;
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
+      try {
+        $data=array();
+        $stmt=$conmy->prepare("select id, nombre from tblchkplantillas;");
+        $stmt->execute();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+          $data[]=array(
+            'id'=>$row['id'],
+            'nombre'=>$row['nombre']
+          );
         }
+        return $data;
+      } catch (PDOException $e) {
+          throw new Exception($e->getMessage());
+      }
     }
 ?>

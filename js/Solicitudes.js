@@ -24,7 +24,7 @@ $(document).ready(function() {
             dataType:'json',
             data:function(params){
                 return {
-                    codigo:params.term
+                    nombre:params.term
                 };
             },
             processResults:function(datos){
@@ -32,7 +32,7 @@ $(document).ready(function() {
                     results:datos.data.map(function(elem) {
                         return {
                             id:elem.id,
-                            text:elem.codigo,
+                            text:elem.nombre
                         };
                     })
                 }
@@ -56,7 +56,7 @@ $(document).ready(function() {
             dataType: 'json',
             data:function(params){
                 return {
-                    codigo: params.term // parametros a enviar al server. params.term captura lo que se escribe en el input
+                    nombre: params.term // parametros a enviar al server. params.term captura lo que se escribe en el input
                 };
             },
             processResults:function(datos){
@@ -64,7 +64,7 @@ $(document).ready(function() {
                     results: datos.data.map(function(elem) {
                         return {
                             id: elem.id,
-                            text: elem.codigo,
+                            text: elem.nombre
                         };
                     })
                 }
@@ -140,7 +140,7 @@ async function FnBuscarSolicitudes2(){
         const response = await fetch('/solicitudes/search/BuscarSolicitudes.php', {
             method:'POST',
             body: formData
-        });/*.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));*/
+        });//.then(response=>response.text()).then((response)=>{console.log(response)}).catch(err=>console.log(err));
 
         if (!response.ok) { throw new Error(`${response.status} ${response.statusText}`);}
         const datos = await response.json();
@@ -177,7 +177,7 @@ function FnMostrarRegistros(datos){
                 <div class="div d-flex justify-content-between">
                     <p class="m-0"><span class="fw-bold">${solicitud.nombre}</span> <span class="text-secondary" style="font-size: 13px;">${solicitud.fecha}</span></p><p class="m-0">${estado}</p>
                 </div>
-                <div class="div">${solicitud.equcodigo} ${solicitud.actividades}</div>
+                <div class="div">${solicitud.equnombre} ${solicitud.actividades}</div>
             </div>
         </div>`;
     });
